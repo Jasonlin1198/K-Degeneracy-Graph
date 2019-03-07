@@ -29,19 +29,21 @@ int main(int argc, char* argv[]) {
   char* pairs_filename = argv[2];
   char* output_filename = argv[3];
 
+  Graph network;
+
   //TODO   
  /* You can call the pathfinder function from here */
 
   // loads record vector with strings from file
-  Graph::loadFromFile(graph_filename);
+  network.loadFromFile(graph_filename);
 
   // fills unorderedMap with all nodes from input file
-  Graph::fillMap();
+  network.fillMap();
 
   // loads record vector with friendship paths to find
-  Graph::loadFromFile(pairs_filename);
+  network.loadFromFile(pairs_filename);
 
-  for(int i = 0; i < record.size(); i++){
+  for(unsigned int i = 0; i < network.record.size(); i++){
         string s = record[i];
 
         string space = " ";

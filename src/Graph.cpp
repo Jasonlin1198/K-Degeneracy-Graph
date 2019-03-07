@@ -8,33 +8,20 @@
 #include <string>
 #include <utility>
 #include <unordered_map>
+#include <stack> 
 
 using namespace std;
 
-Graph::Graph(void)
-    : nodes(0) {}
+Graph::Graph(void){}
 
 Graph::~Graph(void) {
-  for (auto itr : nodes) {
+  for (auto itr : theGraph) {
     delete itr.second;
   }
 }
 
 /* Add a node to the graph representing person with id idNumber and add a connection between two nodes in the graph. */
 //TODO
-struct Node{
-    vector<int> adj; // the adjacency list
-    int dist;  // current best dist from origin to this node 
-    int index;
-    int prev;  // how we discovered this vertex
-};
-
-
-// structure to place all friend nodes for graph
-unordered_map<int, Node *> theGraph; 
-
-vector<string> record;
-
 /* Read in relationships from an inputfile to create a graph */
 
 bool Graph::loadFromFile(const char* in_filename) {
@@ -73,7 +60,7 @@ bool Graph::loadFromFile(const char* in_filename) {
     return true;
 }
 
-}
+
 
     return true;
     //TODO - YOU HAVE THE PAIR OF IDS OF 2 FRIENDS IN 'RECORD'. WHAT DO NEED TO DO NOW? 
@@ -85,7 +72,7 @@ bool Graph::fillMap() {
    //vector index has string that looks like "1 2"
    //  | 1 2 | 3 4 | 1 3 | 2 4 |   //
     
-   for(int i = 0; i < record.size(); i++){
+   for(unsigned int i = 0; i < record.size(); i++){
         string s = record[i];
         string space = " ";
         // parses first number
@@ -94,12 +81,17 @@ bool Graph::fillMap() {
         int firstInd = std::stoi(first);
         Node* node;
         node->index = firstInd; 
+        node->prev = -1;
+ 	node->dist = 10000;
 
         auto end = s.find(space) + space.length();
         string second = s.substr(end);
         int secondInd = std::stoi(second); 
         Node* node2;
         node2->index = secondInd; 
+        node2->prev = -1;
+ 	node2->dist = 10000;
+
 
         //if number is not already key in theGraph, make key value with value shown in text
         if(theGraph.find(firstInd) != theGraph.end()){
@@ -107,13 +99,15 @@ bool Graph::fillMap() {
         }
     
         if(theGraph.find(secondInd) != theGraph.end()){
-            theGraph.insert({ secondInd, node } ); 
+            theGraph.insert({ secondInd, node2 } ); 
         }
 
         //add number to adjacency vector
         theGraph[firstInd]->adj.push_back(secondInd);
         theGraph[secondInd]->adj.push_back(firstInd);
     }
+
+return true;
 
 }
 
@@ -124,11 +118,6 @@ bool Graph::fillMap() {
 //}
 
 bool Graph::pathfinderOwn(unordered_map<int, Node *> theGraph, int from, int to, const char* in_filename){
-    // initializes all nodes in the vector
-    for(Node * v: theGraph){
-        v->prev = -1;
-        v->dist = 10000;
-    }
 
     ofstream myfile;
     myfile.open("in_filename");
@@ -140,7 +129,7 @@ bool Graph::pathfinderOwn(unordered_map<int, Node *> theGraph, int from, int to,
     toExplore.push(from);
 
     //while stack isn't empty
-    while(!toExpore.empty()){
+    while(!toExplore.empty()){
         //index of reference node to find next closest node
         int currInd = toExplore.top();
 
@@ -148,13 +137,13 @@ bool Graph::pathfinderOwn(unordered_map<int, Node *> theGraph, int from, int to,
         Node * curr = theGraph[toExplore.top()];
      
         //IS THIS WHERE TO PRINT?//
-        myfile << toExplore.pop() << endl;
+        //myfile << toExplore.pop() << endl;
       
         for(int n : curr->adj){
 
 	    // final node is reached
             if(n == to){
-                return;
+                return true;
 	    }
  
 	    // add closest node to stack, initializing dist and index to old reference node
