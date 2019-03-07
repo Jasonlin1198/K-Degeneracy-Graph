@@ -34,9 +34,6 @@ int main(int argc, char* argv[]) {
   // loads record vector with strings from file
   network.loadFromFile(graph_filename);
 
-  // fills unorderedMap with all nodes from input file
-  network.fillMap();
-
   ifstream infile(pairs_filename);
 
   while (infile) {
@@ -61,35 +58,24 @@ int main(int argc, char* argv[]) {
     // size of vector is not 2, continue
     if (record.size() != 2) {
       continue;
-   
+    } 
+
+    // gets indexes of unordered_map to find path
     int from = std::stoi(record[0]);
     int to = std::stoi(record[1]);
 
+    // if nodes to find paths dont exists, move on
+    if(network.theGraph.find(from) == network.theGraph.end() && 
+       network.theGraph.find(to) == network.theGraph.end()){
 
+        continue;
 
-
-
-
- for(unsigned int i = 0; i < network.record.size(); i++){
-        string s = network.record[i];
-
-        string space = " ";
-        // parses first number
-        string first = s.substr(0, s.find(space));
-        // turns string into int for indexing
-        int firstInd = std::stoi(first);
-
-        auto end = s.find(space) + space.length();
-        string second = s.substr(end);
-        int secondInd = std::stoi(second);
-
-        network.pathfinderOwn( firstInd, secondInd, output_filename);
+    }
+    
+    network.pathfinder(to, from, output_filename);
  
   }
 
-
-  
-  
-  
+  infile.close();
     
 }  

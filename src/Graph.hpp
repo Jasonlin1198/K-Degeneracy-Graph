@@ -27,17 +27,13 @@ struct Node{
 
 class Graph {
  protected:
-  //MAYBE ADD CLASS DATA STRUCTURE(S) HERE
- 
- // structure to place all friend nodes for graph
-
-  unordered_map<int, Node *> theGraph; 
-  vector<string> record;
 
 
  public:
-
-    Graph(void);
+  
+  unordered_map<int, Node *> theGraph; 
+  
+  Graph(void);
 
   ~Graph(void);
 
@@ -47,10 +43,8 @@ class Graph {
 
   bool loadFromFile(const char* in_filename);
  
-  bool fillMap();
-
- // bool pathfinder(Node* from, Node* to);
-  bool pathfinderOwn( int from, int to, const char * in_filename);   
+  // bool pathfinder(Node* from, Node* to);
+  bool pathfinder( int from, int to, const char * in_filename);   
  
   void socialgathering(vector<string>& invitees, const int& k);
 

@@ -20,10 +20,7 @@ Graph::~Graph(void) {
   }
 }
 
-/* Add a node to the graph representing person with id idNumber and add a connection between two nodes in the graph. */
-//TODO
 /* Read in relationships from an inputfile to create a graph */
-
 bool Graph::loadFromFile(const char* in_filename) {
   ifstream infile(in_filename);
 
@@ -34,7 +31,7 @@ bool Graph::loadFromFile(const char* in_filename) {
     if (!getline(infile, s)) break;
 
     istringstream ss(s);
-//  vector<string> record;
+    vector<string> record;
 
     while (ss) {
       string s;
@@ -50,78 +47,54 @@ bool Graph::loadFromFile(const char* in_filename) {
     if (record.size() != 2) {
       continue;
     }
+   
+     int firstInd = std::stoi(record[0]);
+     int secondInd = std::stoi(record[1]);
+    
+     Node* node;
+     node->index = firstInd; 
+    
+     Node* node2;
+     node2->index = secondInd; 
+    
+     //if number is not already key in theGraph, make key value with value shown in text
+     if(theGraph.find(firstInd) == theGraph.end()){
+         theGraph.insert({ firstInd, node } ); 
+     }
+    
+     if(theGraph.find(secondInd) == theGraph.end()){
+         theGraph.insert({ secondInd, node2 } ); 
+     }
+
+     //add number to adjacency vector
+     theGraph[firstInd]->adj.push_back(secondInd);
+     theGraph[secondInd]->adj.push_back(firstInd);
+
+    }
 
     if (!infile.eof()) {
-    cerr << "Failed to read " << in_filename << "!\n";
-    return false;
+        cerr << "Failed to read " << in_filename << "!\n";
+        return false;
     }
+
 
     infile.close();
     return true;
-}
-
-
-
-    return true;
-    //TODO - YOU HAVE THE PAIR OF IDS OF 2 FRIENDS IN 'RECORD'. WHAT DO NEED TO DO NOW? 
   
 }
  
 
-bool Graph::fillMap() {
-   //vector index has string that looks like "1 2"
-   //  | 1 2 | 3 4 | 1 3 | 2 4 |   //
-    
-   for(unsigned int i = 0; i < record.size(); i++){
-        string s = record[i];
-        string space = " ";
-        // parses first number
-        string first = s.substr(0, s.find(space));
-        // turns string into int for indexing
-        int firstInd = std::stoi(first);
-        Node* node;
-        node->index = firstInd; 
-        node->prev = -1;
- 	node->dist = 10000;
-
-        int end = s.find(space) + space.length();
-        string second = s.substr(end);
-        int secondInd = std::stoi(second); 
-        Node* node2;
-        node2->index = secondInd; 
-        node2->prev = -1;
- 	node2->dist = 10000;
-
-
-        //if number is not already key in theGraph, make key value with value shown in text
-        if(theGraph.find(firstInd) == theGraph.end()){
-            theGraph.insert({ firstInd, node } ); 
-        }
-    
-        if(theGraph.find(secondInd) == theGraph.end()){
-            theGraph.insert({ secondInd, node2 } ); 
-        }
-
-        //add number to adjacency vector
-        theGraph[firstInd]->adj.push_back(secondInd);
-        theGraph[secondInd]->adj.push_back(firstInd);
-    }
-return true;
-
-}
-
-
-/* Implement pathfinder*/
-//TODO 
-//bool Graph::pathfinder(Node* from, Node* to) {
-
-//}
-
-bool Graph::pathfinderOwn(int from, int to, const char* in_filename){
+bool Graph::pathfinder(int from, int to, const char* in_filename){
 
     ofstream myfile;
     myfile.open("in_filename");
-    
+
+    for( auto v : theGraph){
+        v.second->prev = -1;
+        v.second->prev = 10000;
+    }    
+
+
     stack<int> toExplore;
 
     // starts path search from certain index node
