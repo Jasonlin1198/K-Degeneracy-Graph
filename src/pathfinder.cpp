@@ -19,7 +19,7 @@ void usage(char* program_name) {
 }
 
 int main(int argc, char* argv[]) {
-  
+  // wrong number of arguments   
   if (argc != 4) {
     usage(argv[0]);
   }
@@ -31,20 +31,47 @@ int main(int argc, char* argv[]) {
 
   Graph network;
 
-  //TODO   
- /* You can call the pathfinder function from here */
-
   // loads record vector with strings from file
   network.loadFromFile(graph_filename);
 
   // fills unorderedMap with all nodes from input file
   network.fillMap();
 
-  // loads record vector with friendship paths to find
-  network.loadFromFile(pairs_filename);
+  ifstream infile(pairs_filename);
 
-  for(unsigned int i = 0; i < network.record.size(); i++){
-        string s = record[i];
+  while (infile) {
+    string s;
+
+    //no more lines to read break from loop
+    if (!getline(infile, s)) break;
+
+    istringstream ss(s);
+    vector<string> record;
+
+    while (ss) {
+      string s;
+
+      //if there is no friendship and only node break and dont add to vector
+      if (!getline(ss, s, ' ')) break;
+
+      //add string to vector
+      record.push_back(s);
+    }
+
+    // size of vector is not 2, continue
+    if (record.size() != 2) {
+      continue;
+   
+    int from = std::stoi(record[0]);
+    int to = std::stoi(record[1]);
+
+
+
+
+
+
+ for(unsigned int i = 0; i < network.record.size(); i++){
+        string s = network.record[i];
 
         string space = " ";
         // parses first number
@@ -52,10 +79,11 @@ int main(int argc, char* argv[]) {
         // turns string into int for indexing
         int firstInd = std::stoi(first);
 
+        auto end = s.find(space) + space.length();
         string second = s.substr(end);
         int secondInd = std::stoi(second);
 
-        pathfinderOwn(theGraph, firstInd, secondInd, output_filename);
+        network.pathfinderOwn( firstInd, secondInd, output_filename);
  
   }
 

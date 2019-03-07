@@ -30,13 +30,14 @@ class Graph {
   //MAYBE ADD CLASS DATA STRUCTURE(S) HERE
  
  // structure to place all friend nodes for graph
- unordered_map<int, Node *> theGraph; 
 
- vector<string> record;
+  unordered_map<int, Node *> theGraph; 
+  vector<string> record;
 
 
  public:
-  Graph(void);
+
+    Graph(void);
 
   ~Graph(void);
 
@@ -49,7 +50,7 @@ class Graph {
   bool fillMap();
 
  // bool pathfinder(Node* from, Node* to);
-  bool pathfinderOwn(unordered_map<int, Node *> theGraph, int from, int to, const char * in_filename);   
+  bool pathfinderOwn( int from, int to, const char * in_filename);   
  
   void socialgathering(vector<string>& invitees, const int& k);
 

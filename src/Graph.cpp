@@ -84,7 +84,7 @@ bool Graph::fillMap() {
         node->prev = -1;
  	node->dist = 10000;
 
-        auto end = s.find(space) + space.length();
+        int end = s.find(space) + space.length();
         string second = s.substr(end);
         int secondInd = std::stoi(second); 
         Node* node2;
@@ -94,11 +94,11 @@ bool Graph::fillMap() {
 
 
         //if number is not already key in theGraph, make key value with value shown in text
-        if(theGraph.find(firstInd) != theGraph.end()){
+        if(theGraph.find(firstInd) == theGraph.end()){
             theGraph.insert({ firstInd, node } ); 
         }
     
-        if(theGraph.find(secondInd) != theGraph.end()){
+        if(theGraph.find(secondInd) == theGraph.end()){
             theGraph.insert({ secondInd, node2 } ); 
         }
 
@@ -106,10 +106,10 @@ bool Graph::fillMap() {
         theGraph[firstInd]->adj.push_back(secondInd);
         theGraph[secondInd]->adj.push_back(firstInd);
     }
-
 return true;
 
 }
+
 
 /* Implement pathfinder*/
 //TODO 
@@ -117,7 +117,7 @@ return true;
 
 //}
 
-bool Graph::pathfinderOwn(unordered_map<int, Node *> theGraph, int from, int to, const char* in_filename){
+bool Graph::pathfinderOwn(int from, int to, const char* in_filename){
 
     ofstream myfile;
     myfile.open("in_filename");
