@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include "Graph.hpp"
 
 using namespace std;
@@ -31,6 +32,34 @@ int main(int argc, char* argv[]) {
   //TODO   
  /* You can call the pathfinder function from here */
 
+  // loads record vector with strings from file
+  Graph::loadFromFile(graph_filename);
 
+  // fills unorderedMap with all nodes from input file
+  Graph::fillMap();
+
+  // loads record vector with friendship paths to find
+  Graph::loadFromFile(pairs_filename);
+
+  for(int i = 0; i < record.size(); i++){
+        string s = record[i];
+
+        string space = " ";
+        // parses first number
+        string first = s.substr(0, s.find(space));
+        // turns string into int for indexing
+        int firstInd = std::stoi(first);
+
+        string second = s.substr(end);
+        int secondInd = std::stoi(second);
+
+        pathfinderOwn(theGraph, firstInd, secondInd, output_filename);
+ 
+  }
+
+
+  
+  
+  
     
 }  
