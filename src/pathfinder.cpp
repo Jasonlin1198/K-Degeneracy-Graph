@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
 
     // size of vector is not 2, continue
     if (record.size() != 2) {
-      continue;
+        continue;
     } 
 
     // gets indexes of unordered_map to find path

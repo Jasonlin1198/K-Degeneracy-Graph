@@ -86,8 +86,7 @@ bool Graph::loadFromFile(const char* in_filename) {
 
 bool Graph::pathfinder(int from, int to, const char* in_filename){
 
-    ofstream myfile;
-    myfile.open("in_filename");
+    ofstream myfile(in_filename);
 
     for( auto v : theGraph){
         v.second->prev = -1;
@@ -100,8 +99,17 @@ bool Graph::pathfinder(int from, int to, const char* in_filename){
 
     // starts path search from certain index node
     theGraph[from]->dist = 0;
+
+    for(int x: theGraph[from]->adj){
+	if(x == to){
+	    toPrint.push(from);
+	    toPrint.push(to);
+	    goto print; 
+	}
+    }
+
+
     toExplore.push(from);
-    toPrint.push(from);
 
     //while stack isn't empty
     while(!toExplore.empty()){
@@ -114,40 +122,42 @@ bool Graph::pathfinder(int from, int to, const char* in_filename){
         toExplore.pop();
   
         for(int n : curr->adj){
- 
+
 	    // add closest node to stack, initializing dist and index to old reference node
             if(curr->dist + 1 < theGraph[n]->dist){
 	        theGraph[n]->dist = curr->dist+1;
 		theGraph[n]->prev = currInd;
 		toExplore.push(n);
-
+            }
 		// once destination is reached, push the path gotten there to a stack
-                if(n == to){
-		    int num = n;
-                    Node * print = theGraph[num];
-    		    theGraph[from]->prev = -1;                
-		    while(print->prev != -1){
-                       toPrint.push(num);
-                       print = theGraph[theGraph[num]->prev];
-                    }
-                    toPrint.push(from);
-
-    	        }
+            if(n == to){
+	        int num = n;
+                Node * print = theGraph[num];
+                theGraph[from]->prev = -1;                
+	        while(print->prev != -1){
+                   toPrint.push(num);
+                   print = theGraph[theGraph[num]->prev];
+		   num = theGraph[num]->prev;
+                }
+                toPrint.push(from);
+	        break;
+    	    }
           
-	    }
+	    
 	}
     }
-
+print:
     // prints all but last node 
-    while(toPrint.size() != 1 ){
-       myfile << toPrint.top() + " ";
+    while(1){
+       myfile << toPrint.top();
        toPrint.pop();
-    }
-   
-    // prints last node 
-    myfile << toPrint.top();
-    toPrint.pop();
 
+       if(toPrint.empty()){
+           break;
+       }
+       myfile << " ";
+    }
+    myfile << "\n";
     myfile.close();
     return true;
 }
