@@ -1,6 +1,6 @@
 CC := g++
 CXXFLAGS=-Wall -pedantic -std=c++11
-LDFLAGS=-g
+
 # Use with `make opt=1` to optimize code
 ifdef opt
 	CXXFLAGS += -O3
@@ -15,7 +15,6 @@ endif
 SRCDIR := src
 BUILDDIR := build
 OBJDIR := $(BUILDDIR)/obj
-
 
 all: init pathfinder socialgathering
 
