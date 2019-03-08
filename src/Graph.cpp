@@ -1,4 +1,5 @@
 #include "Graph.hpp"
+#include "Node.hpp"
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -9,6 +10,7 @@
 #include <utility>
 #include <unordered_map>
 #include <stack> 
+#include <queue>
 
 using namespace std;
 
@@ -51,19 +53,17 @@ bool Graph::loadFromFile(const char* in_filename) {
      int firstInd = std::stoi(record[0]);
      int secondInd = std::stoi(record[1]);
     
-     Node* node;
-     node->index = firstInd; 
+     Node* node = new Node();
     
-     Node* node2;
-     node2->index = secondInd; 
+     Node* node2 = new Node();
     
      //if number is not already key in theGraph, make key value with value shown in text
      if(theGraph.find(firstInd) == theGraph.end()){
-         theGraph.insert({ firstInd, node } ); 
+         theGraph.insert(make_pair (firstInd, node) ); 
      }
     
      if(theGraph.find(secondInd) == theGraph.end()){
-         theGraph.insert({ secondInd, node2 } ); 
+         theGraph.insert(make_pair (secondInd, node2) ); 
      }
 
      //add number to adjacency vector
@@ -91,15 +91,17 @@ bool Graph::pathfinder(int from, int to, const char* in_filename){
 
     for( auto v : theGraph){
         v.second->prev = -1;
-        v.second->prev = 10000;
+        v.second->dist = std::numeric_limits<int>::max();
     }    
 
-
+    stack<int> toPrint;
+ 
     stack<int> toExplore;
 
     // starts path search from certain index node
     theGraph[from]->dist = 0;
     toExplore.push(from);
+    toPrint.push(from);
 
     //while stack isn't empty
     while(!toExplore.empty()){
@@ -108,16 +110,10 @@ bool Graph::pathfinder(int from, int to, const char* in_filename){
 
 	//ref to reference node
         Node * curr = theGraph[toExplore.top()];
-     
-        //IS THIS WHERE TO PRINT?//
-        //myfile << toExplore.pop() << endl;
-      
+   
+        toExplore.pop();
+  
         for(int n : curr->adj){
-
-	    // final node is reached
-            if(n == to){
-                return true;
-	    }
  
 	    // add closest node to stack, initializing dist and index to old reference node
             if(curr->dist + 1 < theGraph[n]->dist){
@@ -125,12 +121,35 @@ bool Graph::pathfinder(int from, int to, const char* in_filename){
 		theGraph[n]->prev = currInd;
 		toExplore.push(n);
 
-           
+		// once destination is reached, push the path gotten there to a stack
+                if(n == to){
+		    int num = n;
+                    Node * print = theGraph[num];
+    		    theGraph[from]->prev = -1;                
+		    while(print->prev != -1){
+                       toPrint.push(num);
+                       print = theGraph[theGraph[num]->prev];
+                    }
+                    toPrint.push(from);
+
+    	        }
+          
 	    }
 	}
     }
-myfile.close();
-return true;
+
+    // prints all but last node 
+    while(toPrint.size() != 1 ){
+       myfile << toPrint.top() + " ";
+       toPrint.pop();
+    }
+   
+    // prints last node 
+    myfile << toPrint.top();
+    toPrint.pop();
+
+    myfile.close();
+    return true;
 }
 /* Implement social gathering*/
 //TODO

@@ -13,17 +13,12 @@
 #include <string>
 #include <utility>
 
+#include <stack> 
+#include <queue>
+
+#include "Node.hpp"
 
 using namespace std;
-
-struct Node{
-    vector<int> adj; // the adjacency list
-    int dist;  // current best dist from origin to this node 
-    int prev;  // how we discovered this vertex
-    int index;
-};
-
-
 
 class Graph {
  protected:

@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
 
     }
     
-    network.pathfinder(to, from, output_filename);
+    network.pathfinder(from, to, output_filename);
  
   }
 
