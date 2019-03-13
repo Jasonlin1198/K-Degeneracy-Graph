@@ -167,3 +167,87 @@ void Graph::socialgathering(vector<string>& invitees, const int& k) {
 
 }
 
+vector<int> Graph::socialgathering( const int& k){
+    int n, degree, maxDeg, i, start, num; 
+    int v, u, w, du, pu, pw;
+    
+
+    vector<int> tableVert;
+    vector<int> tableDeg;
+    vector<tableVert> vert, pos, deg;
+    vector<tableDeg> bin;
+
+    // number of vertex
+    n = theGraph.size();
+    // max degree to be 0 
+    md = 0;
+
+    // each vertex
+    for( int z = 0 ; z < n ; v++ ){
+        d = 0;
+	// each neighbor of vertex
+	for( int u : theGraph[v]->adj ){
+	    // increments and sets degree in vector to return
+	    d++;
+            deg[v] = d;
+	    // sets new max degree
+	    if( d > md ){
+	        md = d;
+            }
+	}
+    }
+    // intialize bin to 0
+    // bin contains for each possible degree the position of the first vertex of that degree in array vert
+    for( int x = 0; x <= md ; x++){
+        bin[x] = 0;
+    } 
+    // increment the bin's indexes repective to degree of each vertex in theGraph
+    for( int y = 0 ; y < n; y++){
+	bin[deg[v]]++;
+    }
+    start = 1;
+
+    // from bin sizes we can determine starting positions of bins in the array vert
+    for( int b = 0; b <= md; b++){
+        num = bin[b];
+	bin[b] = start;
+	start++;
+	num++;
+    }
+
+    // put vertices of graph into the array vert. 
+    // for each vertex we know which bin it belongs and what is the starting positions of that bin
+    // we can put the current vertex to the proper place, remember it position in the table pos, and increase the starting position of the bin we used.
+    for( int a = 0; a < n; a++){
+        pos[a] = bin[deg[a]];
+	vert[pos[a]] = a;
+	bin[deg[a]]++;
+    }
+    
+    for( int temp = md; temp > 0 ; temp--){
+        bin[temp] = bin[temp-1];
+    }
+    bin[0] = 1;
+
+    for( int i = 0; i < n; i++){
+        v = vert[i];
+	for( int r: theGraph[v]->adj){
+	    if(deg[r] > deg[v]){
+	        du = deg[r];
+		pu = pos[r];
+		pw = bin[du];
+		w = vert[pw];
+	        if(r != w){
+		    pos[r] = pw;
+		    pos[w] = pu;
+		    vert[pu] = w;
+		    vert[pw] = r;
+		}
+		bin[du]++;
+		deg[r]--;
+	    }
+	}
+    }
+
+}
+
