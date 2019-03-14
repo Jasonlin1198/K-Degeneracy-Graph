@@ -30,6 +30,8 @@ int main(int argc, char* argv[]) {
   // loads theGraph with strings from file
   network.loadFromFile(graph_filename);
 
+  ofstream myfile(output_filename);
+
   // vector to check vistited adjacent nodes
   vector<bool> checked(network.theGraph.size());
 
@@ -48,30 +50,32 @@ int main(int argc, char* argv[]) {
 	  break;
       }
       // input file was empty, dont print or call anything
-      return -1; 
+ //     return -1; 
   }
 
   network.socialgathering(start, checked, k);
 
   int next;
-  ofstream myfile(output_filename);
-  
+ 
   for(unsigned int x = 0 ; x < network.theGraph.size(); x++){
       // if node has enough core
-      if(network.theGraph[x]->degree >= k){
-          //prints first node
-	  myfile << x; 
-	  next = x; 
-          break;
-
+      if(network.theGraph[x]){
+          if(network.theGraph[x]->degree >= k){
+              //prints first node
+	      myfile << x; 
+	      next = x; 
+              break;
+          }
       }
   }
 
   // prints rest of nodes with new lines 
-  for(unsigned int y = next; y < network.theGraph.size(); y++){
-      if(network.theGraph[y]->degree >= k){
+  for(unsigned int y = next+1; y < network.theGraph.size(); y++){
+      if(network.theGraph[y]){
+          if(network.theGraph[y]->degree >= k){
 
-          myfile << "\n" << y;
+              myfile << "\n" << y;
+          }
       }
   }
   return 1;

@@ -89,6 +89,74 @@ bool Graph::loadFromFile(const char* in_filename) {
   
 }
  
+/* Read in relationships from an inputfile to create a graph */
+bool Graph::loadFriendshipFromFile(const char* in_filename) {
+  ifstream infile(in_filename);
+
+  while (infile) {
+    string s;
+
+    //no more lines to read break from loop
+    if (!getline(infile, s)) break;
+
+    istringstream ss(s);
+    vector<string> record;
+
+    while (ss) {
+      string s;
+
+      //if there is no friendship and only node break and dont add to vector
+      if (!getline(ss, s, ' ')) break;
+
+      //add string to vector
+      record.push_back(s);
+    }
+
+    // size of vector is not 2, continue
+    if (record.size() != 3) {
+      continue;
+    }
+   
+     int firstInd = std::stoi(record[0]);
+     int secondInd = std::stoi(record[1]);
+     int length = std::stoi(record[2]);
+    
+     Node* node = new Node();
+    
+     Node* node2 = new Node();
+    
+     //if number is not already key in theGraph, make key value with value shown in text
+     if(theGraph.find(firstInd) == theGraph.end()){
+         theGraph.insert(make_pair (firstInd, node) ); 
+     }
+    
+     if(theGraph.find(secondInd) == theGraph.end()){
+         theGraph.insert(make_pair (secondInd, node2) ); 
+     }
+
+     //add number to adjacency vector
+     theGraph[firstInd]->adj.push_back(secondInd);
+     theGraph[secondInd]->adj.push_back(firstInd);
+
+     theGraph[firstInd]->weight = vector<int>(10000,0);
+     theGraph[secondInd]->weight = vector<int>(10000,0);
+     
+     // adds weight to the relationship
+     theGraph[firstInd]->weight[secondInd] = length;
+     theGraph[secondInd]->weight[firstInd] = length;
+
+    }
+
+    if (!infile.eof()) {
+        cerr << "Failed to read " << in_filename << "!\n";
+        return false;
+    }
+
+
+    infile.close();
+    return true;
+  
+}
 
 bool Graph::pathfinder(int from, int to, const char* in_filename){
 
@@ -175,7 +243,7 @@ bool Graph::socialgathering(int i, vector<bool> &checked, const int& k) {
     checked[i] = true; 
 
     // loops through all adjacent nodes
-	vector<int>::iterator iter;
+    vector<int>::iterator iter;
     for(iter = theGraph[i]->adj.begin(); iter != theGraph[i]->adj.end(); iter++){
 	// if node itself is less than k
         if(theGraph[i]->degree < k){
@@ -187,7 +255,7 @@ bool Graph::socialgathering(int i, vector<bool> &checked, const int& k) {
 	    //recursively call on adjacent node to check for k core
 	    if(socialgathering(*iter, checked, k)){
 		// adjacent node has been removed, therefore decrement original node degree
-	        theGraph[i]->degree--;	    	
+	        // theGraph[i]->degree--;	    	
 	    }
 	}
     }
@@ -198,88 +266,21 @@ bool Graph::socialgathering(int i, vector<bool> &checked, const int& k) {
     return false; 
 
 }
-/*
-vector<int> Graph::socialgathering( const int& k){
-    int num, d, v;
-    int du, pu, pw;
-    
 
-    vector<int> tableVert;
-    vector<int> tableDeg;
-    vector<tableVert> vert, pos, deg;
-    vector<tableDeg> bin;
+double Graph::averagefriendship( int person, const char * in_filename){
 
-    // number of vertex
-    int n = theGraph.size();
-    // max degree to be 0 
-    int md = 0;
+    ofstream myfile(in_filename);
 
-    // each vertex
-    for( int a = 0 ; a < n ; a++ ){
-        d = 0;
-	// each neighbor of vertex
-	for( int u : theGraph[a]->adj ){
-	    // increments and sets degree in vector to return
-	    d++;
-            deg[a] = d;
-	    // sets new max degree
-	    if( d > md ){
-	        md = d;
-            }
-	}
-    }
-    // intialize bin to 0
-    // bin contains for each possible degree the position of the first vertex of that degree in array vert
-    for( int x = 0; x <= md ; x++){
-        bin[x] = 0;
-    } 
-    // increment the bin's indexes repective to degree of each vertex in theGraph
-    for( int y = 0 ; y < n; y++){
-	bin[deg[y]]++;
-    }
-    int start = 1;
+    double sum = 0.0;
 
-    // from bin sizes we can determine starting positions of bins in the array vert
-    for( int b = 0; b <= md; b++){
-        num = bin[b];
-	bin[b] = start;
-	start += num;
+    for( int x : theGraph[person]->adj){
+        sum += theGraph[person]->weight[x];
     }
 
-    // put vertices of graph into the array vert. 
-    // for each vertex we know which bin it belongs and what is the starting positions of that bin
-    // we can put the current vertex to the proper place, remember it position in the table pos, and increase the starting position of the bin we used.
-    for( int c = 0; c < n; c++){
-        pos[c] = bin[deg[c]];
-	vert[pos[c]] = c;
-	bin[deg[c]]++;
-    }
-    
-    for( int temp = md; temp > 0 ; temp--){
-        bin[temp] = bin[temp-1];
-    }
+    sum /= theGraph[person]->adj.size();
 
-    bin[0] = 1;
-
-    for( int i = 0; i < n; i++){
-        v = vert[i];
-	for( int u: theGraph[v]->adj){
-	    if(deg[u] > deg[v]){
-	        du = deg[u];
-		pu = pos[u];
-		pw = bin[du];
-		w = vert[pw];
-	        if(u != w){
-		    pos[u] = pw;
-		    pos[w] = pu;
-		    vert[pu] = w;
-		    vert[pw] = u;
-		}
-		bin[du]++;
-		deg[u]--;
-	    }
-	}
-    }
-return deg;
+    myfile << sum << endl; 
+  
+    return sum;
+ 
 }
-*/

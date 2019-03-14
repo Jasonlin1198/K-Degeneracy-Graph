@@ -38,10 +38,14 @@ class Graph {
 
   bool loadFromFile(const char* in_filename);
  
+  bool loadFriendshipFromFile(const char* in_filename);
+ 
   // bool pathfinder(Node* from, Node* to);
   bool pathfinder( int from, int to, const char * in_filename);   
  
   bool socialgathering(int i, vector<bool>&checked, const int& k);
+
+  double averagefriendship( int person, const char * in_filename);
 
 };
 

@@ -16,12 +16,15 @@ SRCDIR := src
 BUILDDIR := build
 OBJDIR := $(BUILDDIR)/obj
 
-all: init pathfinder socialgathering
+all: init pathfinder socialgathering averagefriendship
 
 pathfinder: init $(addprefix $(OBJDIR)/,pathfinder.o Graph.o)
 	$(CC) $(LDFLAGS) -o $(BUILDDIR)/$@ $(filter-out init,$^)
 
 socialgathering: init $(addprefix $(OBJDIR)/,socialgathering.o Graph.o)
+	$(CC) $(LDFLAGS) -o $(BUILDDIR)/$@ $(filter-out init,$^)
+
+averagefriendship: init $(addprefix $(OBJDIR)/,averagefriendship.o Graph.o)
 	$(CC) $(LDFLAGS) -o $(BUILDDIR)/$@ $(filter-out init,$^)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
