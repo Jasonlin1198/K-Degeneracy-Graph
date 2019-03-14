@@ -30,8 +30,7 @@ int main(int argc, char* argv[]) {
   // loads theGraph with strings from file
   network.loadFromFile(graph_filename);
 
-
-  // vector to check vistited ajdacent nodes
+  // vector to check vistited adjacent nodes
   vector<bool> checked(network.theGraph.size());
 
   // gets k core number

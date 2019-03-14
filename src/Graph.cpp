@@ -5,6 +5,7 @@
 #include <iostream>
 #include <limits>
 #include <set>
+#include <list>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -174,16 +175,17 @@ bool Graph::socialgathering(int i, vector<bool> &checked, const int& k) {
     checked[i] = true; 
 
     // loops through all adjacent nodes
-    for(unsigned int x = 0; x < theGraph[i]->adj.size(); x++){
+	vector<int>::iterator iter;
+    for(iter = theGraph[i]->adj.begin(); iter != theGraph[i]->adj.end(); iter++){
 	// if node itself is less than k
         if(theGraph[i]->degree < k){
 	    // decrements adjacent nodes
-	    theGraph[theGraph[i]->adj[x]]->degree--;
+	    theGraph[*iter]->degree--;
 	}        
         // if adjacent node has not been checked
-	if(checked[x] == false){
+	if(!checked[*iter]){
 	    //recursively call on adjacent node to check for k core
-	    if(socialgathering(x, checked, k)){
+	    if(socialgathering(*iter, checked, k)){
 		// adjacent node has been removed, therefore decrement original node degree
 	        theGraph[i]->degree--;	    	
 	    }
