@@ -11,7 +11,7 @@ public:
     int dist;  // current best dist from origin to this node 
     int prev;  // how we discovered this vertex
     int index;
-
+    int degree;
     Node(){};
 
 };

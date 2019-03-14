@@ -41,7 +41,7 @@ class Graph {
   // bool pathfinder(Node* from, Node* to);
   bool pathfinder( int from, int to, const char * in_filename);   
  
-  void socialgathering(vector<string>& invitees, const int& k);
+  bool socialgathering(int i, vector<bool>&checked, const int& k);
 
 };
 

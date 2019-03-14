@@ -70,6 +70,11 @@ bool Graph::loadFromFile(const char* in_filename) {
      theGraph[firstInd]->adj.push_back(secondInd);
      theGraph[secondInd]->adj.push_back(firstInd);
 
+     // updates degree of node when adding to ajacency list
+     theGraph[firstInd]->degree = theGraph[firstInd]->adj.size();
+
+     theGraph[secondInd]->degree = theGraph[secondInd]->adj.size();
+
     }
 
     if (!infile.eof()) {
@@ -161,15 +166,40 @@ print:
     myfile.close();
     return true;
 }
+
 /* Implement social gathering*/
 //TODO
-void Graph::socialgathering(vector<string>& invitees, const int& k) {
+bool Graph::socialgathering(int i, vector<bool> &checked, const int& k) {
+
+    checked[i] = true; 
+
+    // loops through all adjacent nodes
+    for(unsigned int x = 0; x < theGraph[i]->adj.size(); x++){
+	// if node itself is less than k
+        if(theGraph[i]->degree < k){
+	    // decrements adjacent nodes
+	    theGraph[theGraph[i]->adj[x]]->degree--;
+	}        
+        // if adjacent node has not been checked
+	if(checked[x] == false){
+	    //recursively call on adjacent node to check for k core
+	    if(socialgathering(x, checked, k)){
+		// adjacent node has been removed, therefore decrement original node degree
+	        theGraph[i]->degree--;	    	
+	    }
+	}
+    }
+    //if node was removed
+    if(theGraph[i]->degree < k){
+       return true;
+    }
+    return false; 
 
 }
-
+/*
 vector<int> Graph::socialgathering( const int& k){
-    int n, degree, maxDeg, i, start, num; 
-    int v, u, w, du, pu, pw;
+    int num, d, v;
+    int du, pu, pw;
     
 
     vector<int> tableVert;
@@ -178,18 +208,18 @@ vector<int> Graph::socialgathering( const int& k){
     vector<tableDeg> bin;
 
     // number of vertex
-    n = theGraph.size();
+    int n = theGraph.size();
     // max degree to be 0 
-    md = 0;
+    int md = 0;
 
     // each vertex
-    for( int z = 0 ; z < n ; v++ ){
+    for( int a = 0 ; a < n ; a++ ){
         d = 0;
 	// each neighbor of vertex
-	for( int u : theGraph[v]->adj ){
+	for( int u : theGraph[a]->adj ){
 	    // increments and sets degree in vector to return
 	    d++;
-            deg[v] = d;
+            deg[a] = d;
 	    // sets new max degree
 	    if( d > md ){
 	        md = d;
@@ -203,51 +233,51 @@ vector<int> Graph::socialgathering( const int& k){
     } 
     // increment the bin's indexes repective to degree of each vertex in theGraph
     for( int y = 0 ; y < n; y++){
-	bin[deg[v]]++;
+	bin[deg[y]]++;
     }
-    start = 1;
+    int start = 1;
 
     // from bin sizes we can determine starting positions of bins in the array vert
     for( int b = 0; b <= md; b++){
         num = bin[b];
 	bin[b] = start;
-	start++;
-	num++;
+	start += num;
     }
 
     // put vertices of graph into the array vert. 
     // for each vertex we know which bin it belongs and what is the starting positions of that bin
     // we can put the current vertex to the proper place, remember it position in the table pos, and increase the starting position of the bin we used.
-    for( int a = 0; a < n; a++){
-        pos[a] = bin[deg[a]];
-	vert[pos[a]] = a;
-	bin[deg[a]]++;
+    for( int c = 0; c < n; c++){
+        pos[c] = bin[deg[c]];
+	vert[pos[c]] = c;
+	bin[deg[c]]++;
     }
     
     for( int temp = md; temp > 0 ; temp--){
         bin[temp] = bin[temp-1];
     }
+
     bin[0] = 1;
 
     for( int i = 0; i < n; i++){
         v = vert[i];
-	for( int r: theGraph[v]->adj){
-	    if(deg[r] > deg[v]){
-	        du = deg[r];
-		pu = pos[r];
+	for( int u: theGraph[v]->adj){
+	    if(deg[u] > deg[v]){
+	        du = deg[u];
+		pu = pos[u];
 		pw = bin[du];
 		w = vert[pw];
-	        if(r != w){
-		    pos[r] = pw;
+	        if(u != w){
+		    pos[u] = pw;
 		    pos[w] = pu;
 		    vert[pu] = w;
-		    vert[pw] = r;
+		    vert[pw] = u;
 		}
 		bin[du]++;
-		deg[r]--;
+		deg[u]--;
 	    }
 	}
     }
-
+return deg;
 }
-
+*/
