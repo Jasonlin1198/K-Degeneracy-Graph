@@ -146,7 +146,6 @@ bool Graph::loadFriendshipFromFile(const char* in_filename) {
         return false;
     }
 
-
     infile.close();
     return true;
   
