@@ -45,7 +45,7 @@ class Graph {
  
   bool socialgathering(int i, vector<bool>&checked, const int& k);
 
-  double averagefriendship( int person, const char * in_filename);
+  double averagefriendship( int person );
 
 };
 

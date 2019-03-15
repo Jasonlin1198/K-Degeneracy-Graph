@@ -31,6 +31,9 @@ int main(int argc, char* argv[]) {
   network.loadFriendshipFromFile(graph_filename);
 
   ifstream infile(pairs_filename);
+  ofstream myfile(output_filename);
+
+  double sum = 0.0;
 
   while (infile) {
     string s;
@@ -38,17 +41,11 @@ int main(int argc, char* argv[]) {
     //no more lines to read break from loop
     if (!getline(infile, s)) break;
 
-    istringstream ss(s);
+	int person = std::stoi(s);
 
-    int person;
-    ss >> person;
-    
-    // if nodes to find paths dont exists, move on
-    if(network.theGraph.find(person) == network.theGraph.end()){
-        continue;
-    }
+    sum = network.averagefriendship(person);
 
-    network.averagefriendship(person, output_filename);
+	myfile << sum << endl;
 
   }      
 

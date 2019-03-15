@@ -8,7 +8,7 @@ using namespace std;
 class Node{
 public:
     vector<int> adj; // the adjacency list
-    vector<int> weight;
+    vector<int> weight {vector<int> (10000, 0) };
     int dist;  // current best dist from origin to this node 
     int prev;  // how we discovered this vertex
     int index;

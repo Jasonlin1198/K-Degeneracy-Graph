@@ -55,7 +55,6 @@ bool Graph::loadFromFile(const char* in_filename) {
      int secondInd = std::stoi(record[1]);
     
      Node* node = new Node();
-    
      Node* node2 = new Node();
     
      //if number is not already key in theGraph, make key value with value shown in text
@@ -122,7 +121,6 @@ bool Graph::loadFriendshipFromFile(const char* in_filename) {
      int length = std::stoi(record[2]);
     
      Node* node = new Node();
-    
      Node* node2 = new Node();
     
      //if number is not already key in theGraph, make key value with value shown in text
@@ -137,14 +135,10 @@ bool Graph::loadFriendshipFromFile(const char* in_filename) {
      //add number to adjacency vector
      theGraph[firstInd]->adj.push_back(secondInd);
      theGraph[secondInd]->adj.push_back(firstInd);
-
-     theGraph[firstInd]->weight = vector<int>(10000,0);
-     theGraph[secondInd]->weight = vector<int>(10000,0);
      
      // adds weight to the relationship
      theGraph[firstInd]->weight[secondInd] = length;
      theGraph[secondInd]->weight[firstInd] = length;
-
     }
 
     if (!infile.eof()) {
@@ -267,20 +261,15 @@ bool Graph::socialgathering(int i, vector<bool> &checked, const int& k) {
 
 }
 
-double Graph::averagefriendship( int person, const char * in_filename){
-
-    ofstream myfile(in_filename);
-
+double Graph::averagefriendship(int person)
+{
     double sum = 0.0;
 
-    for( int x : theGraph[person]->adj){
+    for( int x : theGraph[person]->adj)
+	{
         sum += theGraph[person]->weight[x];
     }
-
     sum /= theGraph[person]->adj.size();
 
-    myfile << sum << endl; 
-  
     return sum;
- 
 }
